@@ -7,11 +7,13 @@ import { defineConfig } from 'vite'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
-export default defineConfig({
+// En build : base du dépôt GitHub Pages (/{nom-du-repo}/)
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/cv-dimitrifanado/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+}))
