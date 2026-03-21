@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "schemaVersion": "1.0",
+    "locale": "fr-FR",
+    "lastUpdated": "2026-03-20"
+  },
+  "profile": {
+    "name": "Dimitri Fanado",
+    "headline": "Conseiller Relation Client & Concepteur Solutions IA",
+    "subheadline": "Développeur autodidacte de Solutions Métier",
+    "pitch": "Je relie le terrain du logement social, la réglementation locative et la solution opérationnelle.",
+    "badges": [],
+    "photoUrl": null
+  },
+  "navContact": {
+    "phone": "07 82 72 89 48",
+    "email": "dimitri.fanado@gmail.com",
+    "github": "https://github.com/dimitrifanado",
+    "address": "374 Av. Thiers 33300 Bordeaux"
+  },
+  "featuredProject": {
+    "id": "crc-copilot",
+    "title": "CRC Copilot",
+    "subtitle": "SaaS — L'IA au service du logement social",
+    "shortPitch": "Analyse temps réel, suggestions réglementaires et automatisation CRM pour le secteur immobilier social.",
+    "tags": ["SaaS", "IA", "Logement social", "CRM"],
+    "highlights": [
+      {
+        "title": "Analyse temps réel",
+        "description": "Classification sémantique des appels : Technique, Administratif, Contentieux."
+      },
+      {
+        "title": "Intelligence métier",
+        "description": "Suggestion de réponses basées sur la réglementation immobilière (Loi ELAN, ALUR)."
+      },
+      {
+        "title": "Productivité",
+        "description": "Automatisation de l'historisation CRM avec synthèse structurée des échanges."
+      }
+    ],
+    "stackNote": "Conçu via Cursor, intégrant des modèles LLM optimisés pour le secteur immobilier.",
+    "links": {
+      "demo": "",
+      "repo": "",
+      "article": ""
+    }
+  },
+  "experience": [
+    {
+      "id": "coopairs",
+      "company": "Aquitanis - COOPAIRS",
+      "country": "Bordeaux",
+      "role": "Conseiller Relation Client en Logement Social & Syndic de Copropriété",
+      "startDate": "2024-04-01",
+      "endDate": null,
+      "periodLabel": "04.2024 — Présent",
+      "summary": "Expertise du patrimoine, réglementation locative, médiation et vision des irritants.",
+      "bullets": [
+        "Expertise du patrimoine : gestion des flux entrants pour les parcs immobiliers d'Aquitanis et Mésolia.",
+        "Diagnostic & réglementation : traitement de premier niveau des urgences techniques et cadre réglementaire locatif.",
+        "Médiation : gestion de l'urgence et résolution de conflits complexes.",
+        "Mon + : R&D terrain pour l'analyse des irritants métier pour le développement et l'affinage des algorithmes du CRC Copilot."
+      ],
+      "tags": ["Logement social", "Réglementation", "Médiation", "R&D"]
+    },
+    {
+      "id": "ptite-fumee",
+      "company": "La P'tite Fumée",
+      "country": "France",
+      "role": "Chargé de E-Commerce & Stratégie Digitale",
+      "startDate": "2022-01-01",
+      "endDate": "2024-12-31",
+      "periodLabel": "2022 — 2024",
+      "summary": "E-commerce, acquisition paid, communauté 200K+ et optimisation data / logistique.",
+      "bullets": [
+        "Build : création et pilotage d'un écosystème e-commerce sous Prestashop avec un développeur backend.",
+        "Growth : gestion de l'acquisition (Google Ads, Meta Ads) pour des tournées internationales.",
+        "Community : management d'une audience de +200K abonnés (multiplateforme).",
+        "Data : analyse des tunnels de vente et optimisation de la chaîne logistique / SAV."
+      ],
+      "tags": ["Prestashop", "Ads", "Community", "E-commerce"]
+    },
+    {
+      "id": "ouvert-ledimanche",
+      "company": "ouvert-ledimanche.com",
+      "country": "France",
+      "role": "Chargé de Webmarketing, Communication & Social Media",
+      "startDate": "2020-01-01",
+      "endDate": "2021-12-31",
+      "periodLabel": "2020 - 2021",
+      "summary": "SEO et contenu pour annuaire géolocalisé, animation des communautés et growth social, tunnel freemium → B2B, landing pages et supports commerciaux.",
+      "bullets": [
+        "Stratégie de contenu & SEO : optimisation du référencement naturel pour un annuaire géolocalisé. Création de contenus dynamiques pour capter l'intention de recherche locale (« ouvert aujourd'hui »).",
+        "Social media management & growth : animation et développement des communautés sur les réseaux sociaux. Utilisation du contenu viral pour générer du trafic entrant et asseoir la notoriété de la plateforme.",
+        "Monétisation & acquisition B2B : conception du tunnel de conversion « Freemium ». Transformation de l'audience gratuite en clients payants via des campagnes ciblées.",
+        "Sales enablement : création de landing pages B2B et de supports de communication dédiés à la conversion des commerçants (vente d'emplacements premium)."
+      ],
+      "tags": ["SEO", "Social media", "Contenu", "Freemium", "B2B", "Landing pages"]
+    },
+    {
+      "id": "freevap",
+      "company": "Freevap",
+      "country": "Suisse",
+      "role": "Chargé de Webmarketing International",
+      "startDate": "2018-01-01",
+      "endDate": "2020-12-31",
+      "periodLabel": "2018 — 2020",
+      "summary": "Acquisition internationale sur un marché concurrentiel et régulé ; campagnes et SEO multilingues.",
+      "bullets": [
+        "Complexité : pilotage de la stratégie d'acquisition sur un secteur hyper-concurrentiel et régulé.",
+        "Multilingue : gestion des campagnes et du SEO en français, anglais et allemand.",
+        "Data analysis : optimisation du tunnel de vente et de la rétention client (LTV / CRO)."
+      ],
+      "tags": ["International", "SEO", "Paid", "CRO", "LTV"]
+    }
+  ],
+  "fieldDecade": {
+    "id": "ecole-du-terrain",
+    "title": "L'école du terrain",
+    "periodLabel": "2004 - 2011",
+    "startDate": "2004-01-01",
+    "endDate": "2011-12-31",
+    "summary": "Une décennie d'exploration internationale forgeant une débrouillardise à toute épreuve :",
+    "sections": [
+      {
+        "items": [
+          "Co-gérant d'une boîte de nuit en Guadeloupe pendant un an",
+          "Assistant pour une école de surf",
+          "Employé polyvalent de station de ski à Veysonnaz en Suisse",
+          "Serveur à Bruxelles"
+        ]
+      }
+    ],
+    "tags": ["International", "Terrain", "Hospitality"]
+  },
+  "education": [
+    {
+      "id": "vae-bts-ndrc",
+      "institution": "Académie de Bordeaux",
+      "degree": "VAE BTS — Négociation et digitalisation de la relation client",
+      "startDate": "2024-01-01",
+      "endDate": null,
+      "periodLabel": "En cours",
+      "details": "Dossier validé et première étape passée, il reste le passage devant le jury."
+    },
+    {
+      "id": "tp-relation-client-2023",
+      "institution": "Modula Formation",
+      "degree": "Titre professionnel Relation Client",
+      "startDate": "2023-01-01",
+      "endDate": "2023-12-31",
+      "periodLabel": "2023",
+      "details": "Acquisition des bases du métier de téléconseiller."
+    },
+    {
+      "id": "dut-info",
+      "institution": "IUT de Lyon",
+      "degree": "DUT Informatique",
+      "startDate": "2017-09-01",
+      "endDate": "2018-06-30",
+      "periodLabel": "2017 — 2018",
+      "details": "Algorithmique, structures de données."
+    },
+    {
+      "id": "deug-audiovisuel",
+      "institution": "Université Montpellier 3",
+      "degree": "DEUG Audiovisuel & Cinéma",
+      "startDate": "2012-09-01",
+      "endDate": "2015-06-30",
+      "periodLabel": "2012 — 2015",
+      "details": null
+    },
+    {
+      "id": "daeu-litteraire",
+      "institution": "Université Montpellier 3 — Paul Valéry",
+      "degree": "DAEU Littéraire",
+      "startDate": "2011-09-01",
+      "endDate": "2012-06-30",
+      "periodLabel": "2011 — 2012",
+      "details": null
+    }
+  ],
+  "skills": {
+    "tech": [
+      { "name": "Python (IA)", "level": null },
+      { "name": "Tailwind CSS", "level": null },
+      { "name": "Prestashop", "level": null }
+    ],
+    "tools": [
+      { "name": "Cursor", "level": null },
+      { "name": "Suite Adobe", "level": null }
+    ],
+    "languages": [
+      { "name": "Français", "level": "Maternel" },
+      { "name": "Anglais", "level": "C2 — bilingue" }
+    ]
+  },
+  "personalStack": {
+    "title": "Personal Stack",
+    "items": [
+      {
+        "type": "culture",
+        "title": "Culture",
+        "entries": [
+          {
+            "label": "Top 3 Films",
+            "media": [
+              {
+                "title": "Mr. Nobody",
+                "creditLabel": "Réalisateur",
+                "credit": "Jaco Van Dormael",
+                "year": 2009,
+                "posterUrl": "/posters/mr-nobody.svg"
+              },
+              {
+                "title": "Interstellar",
+                "creditLabel": "Réalisateur",
+                "credit": "Christopher Nolan",
+                "year": 2014,
+                "posterUrl": "/posters/interstellar.svg"
+              },
+              {
+                "title": "Barry Lyndon",
+                "creditLabel": "Réalisateur",
+                "credit": "Stanley Kubrick",
+                "year": 1975,
+                "posterUrl": "/posters/barry-lyndon.svg"
+              }
+            ]
+          },
+          {
+            "label": "Top 3 Séries",
+            "media": [
+              {
+                "title": "The Leftovers",
+                "creditLabel": "Créateur",
+                "credit": "Damon Lindelof",
+                "year": 2014,
+                "posterUrl": "/posters/the-leftovers.svg"
+              },
+              {
+                "title": "Lost",
+                "creditLabel": "Créateurs",
+                "credit": "J.J. Abrams, Damon Lindelof & Carlton Cuse",
+                "year": 2004,
+                "posterUrl": "/posters/lost.svg"
+              },
+              {
+                "title": "Devs",
+                "creditLabel": "Créateur",
+                "credit": "Alex Garland",
+                "year": 2020,
+                "posterUrl": "/posters/devs.svg"
+              }
+            ]
+          },
+          {
+            "label": "Le livre qui m'a fait pleurer",
+            "value": "« Data Structures and Algorithms in Java » — plus de larmes ici que devant Titanic."
+          }
+        ]
+      },
+      {
+        "type": "portfolio",
+        "id": "physique-quantique",
+        "category": "Physique quantique",
+        "subtitleOpen": "Wanted Cat : dead AND alive",
+        "practicePrompt": "Vous voulez le mettre en pratique ?",
+        "blocks": [
+          {
+            "heading": null,
+            "text": "Tout a commencé par une crise existentielle à 9 ans, un livre d'astronomie entre les mains. La réalisation qu'il existe dans l'univers des régions — les trous noirs — dont aucune information ne s'échappera jamais, a été mon premier contact avec l'invisible. Le deuxième choc a été de savoir que le monde matériel repose sur des ondes insaisissables.\n\nComment accepter que le monde macroscopique, si solide en apparence, repose sur des ondes immatérielles ? Ça fait partie des idées vertigineuses ou des paradoxes comme le cerveau humain. Cette machine biologique de chair et de synapses qui parvient à générer la conscience, quelque chose d'aussi insaisissable qu'un champ quantique. Le monde des particules nous apprend que la réalité est une superposition de probabilités, alors que notre quotidien nous impose une rigidité déterministe."
+          },
+          {
+            "heading": "Ligne d'univers d'Einstein",
+            "text": "Si l'univers est déterministe, alors avec la position et la vitesse de chaque particule à un instant T, on peut déduire tout le passé et tout le futur. Et donc le libre arbitre est une illusion confortable puisque le futur est déjà calculé. Nous n'assistons qu'à la projection d'une bobine déjà filmée de notre existence, la découvrant à chaque instant."
+          },
+          {
+            "heading": "L'arbre d'Everett",
+            "text": "Mais s'il est probabiliste, alors à chaque événement quantique l'univers se sépare en plusieurs branches. La loi de Murphy n'est plus une fatalité, mais une certitude statistique : tout ce qui peut arriver, arrive, quelque part, dans une branche de la réalité. Le futur n'est pas une ligne droite mais un arbre infini de possibilités. Et nous sommes donc l'architecte de notre propre réalité."
+          },
+          {
+            "heading": "Qui de Einstein ou de Everett a raison ?",
+            "text": "Sûrement les deux. Peut-être aucun. Certains affirment que la terre est plate, d'autres que nous sommes sur le dos d'une tortue. Et il y a même un calcul qui permet d'affirmer qu'il y a une chance sur trois que nous soyons dans une simulation (Le trilemme de Bostrom).\n\nC'est probablement une bonne chose de ne pas savoir. Peut-être qu'avoir la détermination d'interroger la structure du réel, c'est ce qui nous permet de nous distinguer du règne animal tout en y étant pleinement acteur.\n\nQu'il soit fait de chair, de probabilités ou de pixels, l'important est le regard que nous portons sur l'abîme, car si on le contemple assez longtemps, l'abîme finit par nous regarder."
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "label": "Surf & Snowboard",
+        "tier": "major",
+        "defaultOpen": false,
+        "value": "La sensation de faire partie d'un tout dans les grands espaces. C'est mon bouton \"Reset\" pour garder l'esprit clair et alerte."
+      },
+      {
+        "type": "line",
+        "label": "Football",
+        "tier": "major",
+        "defaultOpen": false,
+        "value": "Héritage paternel de souvenirs au Parc des Princes : Ici c'est Paaaaaaaris"
+      }
+    ]
+  }
+}

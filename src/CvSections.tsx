@@ -1,0 +1,899 @@
+import { useState, type ReactNode } from 'react'
+import type {
+  CultureMediaCard,
+  CvDocument,
+  Experience,
+  PersonalStackCultureItem,
+  PersonalStackPortfolioItem,
+} from './types/cv'
+
+export function ContactLink({
+  href,
+  label,
+}: {
+  href: string
+  label: string
+}) {
+  if (!href.trim()) return null
+  return (
+    <a
+      className="text-sm text-blue-700 underline decoration-blue-700/30 underline-offset-2 hover:decoration-blue-700"
+      href={href}
+      rel="noreferrer"
+      target="_blank"
+    >
+      {label}
+    </a>
+  )
+}
+
+const SCROLL_SECTION = 'scroll-mt-28 md:scroll-mt-8'
+
+/** Grille 0fr→1fr : hauteur animée, le contenu du dessous remonte en douceur */
+const COLLAPSIBLE_GRID_BASE =
+  'grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] motion-reduce:transition-none motion-reduce:duration-0'
+
+function AnimatedHeightPanel({
+  id,
+  open,
+  innerClassName,
+  children,
+}: {
+  id: string
+  open: boolean
+  innerClassName?: string
+  children: ReactNode
+}) {
+  return (
+    <div
+      className={`${COLLAPSIBLE_GRID_BASE} ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      id={id}
+    >
+      <div className="min-h-0 overflow-hidden">
+        <div
+          className={innerClassName?.trim() ?? ''}
+          inert={open ? undefined : true}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Bouton discret : chevron bas → haut quand ouvert */
+const CHEVRON_TOGGLE_BTN_CLASS =
+  'shrink-0 rounded-md p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100/80 hover:text-zinc-600'
+
+function ChevronToggleIcon({
+  expanded,
+  className = 'h-5 w-5',
+}: {
+  expanded: boolean
+  className?: string
+}) {
+  return (
+    <svg
+      aria-hidden
+      className={`${className} transition-transform duration-200 ease-out ${expanded ? '-rotate-180' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.75}
+      viewBox="0 0 24 24"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  )
+}
+
+/** Chevron en bas du panneau pour replier sans remonter */
+function CollapseChevronFooter({
+  ariaLabel,
+  onCollapse,
+}: {
+  ariaLabel: string
+  onCollapse: () => void
+}) {
+  return (
+    <div className="mt-2 flex justify-start pt-1">
+      <button
+        aria-label={ariaLabel}
+        className={CHEVRON_TOGGLE_BTN_CLASS}
+        onClick={onCollapse}
+        type="button"
+      >
+        <ChevronToggleIcon expanded />
+      </button>
+    </div>
+  )
+}
+
+function CollapsibleSection({
+  sectionId,
+  headingId,
+  title,
+  defaultOpen = true,
+  sectionClassName = '',
+  panelClassName = '',
+  headingClassName = 'text-lg font-medium tracking-tight text-zinc-900',
+  children,
+}: {
+  sectionId: string
+  headingId: string
+  title: string
+  defaultOpen?: boolean
+  sectionClassName?: string
+  panelClassName?: string
+  headingClassName?: string
+  children: ReactNode
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  const panelId = `${sectionId}-panel`
+
+  return (
+    <section
+      aria-labelledby={headingId}
+      className={`${SCROLL_SECTION} ${sectionClassName}`.trim()}
+      id={sectionId}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200/80 pb-3">
+        <h2 className={headingClassName} id={headingId}>
+          {title}
+        </h2>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={open ? `Replier la section ${title}` : `Déplier la section ${title}`}
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? `pt-4 ${panelClassName}` : ''}
+        open={open}
+      >
+        {children}
+        <CollapseChevronFooter
+          ariaLabel={`Replier la section ${title}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </section>
+  )
+}
+
+export function SectionApropos({ cv }: { cv: CvDocument }) {
+  return (
+    <CollapsibleSection
+      headingId="titre-section-apropos"
+      sectionId="apropos"
+      title="À propos"
+    >
+      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+        Profil
+      </p>
+      <h1
+        className="mt-2 text-balance text-3xl font-medium tracking-tight text-zinc-900 sm:text-4xl"
+        id="titre-principal"
+      >
+        {cv.profile.headline}
+      </h1>
+      <p className="mt-3 text-pretty text-base text-zinc-600 sm:text-lg">
+        {cv.profile.subheadline}
+      </p>
+      <p className="mt-4 text-pretty text-zinc-700">{cv.profile.pitch}</p>
+      {cv.profile.badges.length > 0 ? (
+        <ul className="mt-5 flex flex-wrap gap-2">
+          {cv.profile.badges.map((b) => (
+            <li key={b.id}>
+              <span className="inline-flex rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-700 shadow-sm">
+                {b.label}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </CollapsibleSection>
+  )
+}
+
+export function SectionProjet({
+  cv,
+  projectOpen,
+  setProjectOpen,
+}: {
+  cv: CvDocument
+  projectOpen: boolean
+  setProjectOpen: (v: boolean | ((b: boolean) => boolean)) => void
+}) {
+  return (
+    <CollapsibleSection
+      headingId="projet-phare"
+      sectionId="projet"
+      title="Projet phare"
+    >
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200/80 pb-3">
+          <div>
+            <h3 className="text-xl font-medium text-zinc-900">
+              {cv.featuredProject.title}
+            </h3>
+            <p className="mt-1 text-sm text-zinc-600">
+              {cv.featuredProject.subtitle}
+            </p>
+          </div>
+          <button
+            aria-controls="projet-details-panel"
+            aria-expanded={projectOpen}
+            aria-label={
+              projectOpen
+                ? `Masquer les détails — ${cv.featuredProject.title}`
+                : `Afficher les détails — ${cv.featuredProject.title}`
+            }
+            className={CHEVRON_TOGGLE_BTN_CLASS}
+            onClick={() => setProjectOpen((v) => !v)}
+            type="button"
+          >
+            <ChevronToggleIcon expanded={projectOpen} />
+          </button>
+        </div>
+        <p className="mt-4 text-pretty text-sm leading-relaxed text-zinc-700">
+          {cv.featuredProject.shortPitch}
+        </p>
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {cv.featuredProject.tags.map((t) => (
+            <li key={t}>
+              <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-700">
+                {t}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <AnimatedHeightPanel
+          innerClassName={projectOpen ? 'mt-5 pt-5' : ''}
+          id="projet-details-panel"
+          open={projectOpen}
+        >
+          <ul className="space-y-4">
+            {cv.featuredProject.highlights.map((h) => (
+              <li key={h.title}>
+                <p className="text-sm font-medium text-zinc-900">{h.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-zinc-600">
+                  {h.description}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-zinc-600">
+            {cv.featuredProject.stackNote}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <ContactLink href={cv.featuredProject.links.demo} label="Démo" />
+            <ContactLink href={cv.featuredProject.links.repo} label="Code" />
+            <ContactLink
+              href={cv.featuredProject.links.article}
+              label="Article"
+            />
+          </div>
+          <CollapseChevronFooter
+            ariaLabel={`Masquer les détails — ${cv.featuredProject.title}`}
+            onCollapse={() => setProjectOpen(false)}
+          />
+        </AnimatedHeightPanel>
+      </div>
+    </CollapsibleSection>
+  )
+}
+
+export function SectionParcours({
+  cv,
+  sortedExperience,
+}: {
+  cv: CvDocument
+  sortedExperience: Experience[]
+}) {
+  return (
+    <CollapsibleSection
+      headingId="parcours-pro"
+      sectionId="parcours"
+      title="Parcours professionnel"
+    >
+      <ol className="relative space-y-8 border-l border-zinc-200 pl-6">
+        {sortedExperience.map((job) => {
+          const isCorporateRole = job.id === 'coopairs'
+          return (
+            <li
+              className={`relative ${isCorporateRole ? 'font-corporate' : ''}`}
+              key={job.id}
+            >
+              <span
+                aria-hidden
+                className={`absolute -left-[29px] top-1.5 h-3 w-3 rounded-full border-2 border-white shadow ${
+                  isCorporateRole
+                    ? 'bg-slate-500 ring-2 ring-slate-200'
+                    : 'bg-zinc-400'
+                }`}
+              />
+              <p
+                className={`text-xs font-medium uppercase tracking-wide text-zinc-500 ${isCorporateRole ? 'tracking-wider' : ''}`}
+              >
+                {job.periodLabel}
+                {` · ${job.company}`}
+                {job.country ? ` · ${job.country}` : ''}
+              </p>
+              <h3 className="mt-1 text-base font-semibold text-zinc-900">
+                {job.role}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                {job.summary}
+              </p>
+              <ul className="mt-3 list-disc space-y-1.5 pl-4 text-sm text-zinc-700">
+                {job.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {job.tags.map((t) => (
+                  <li key={t}>
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-xs ${
+                        isCorporateRole
+                          ? 'bg-slate-100 text-slate-700'
+                          : 'bg-zinc-100 text-zinc-600'
+                      }`}
+                    >
+                      {t}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )
+        })}
+      </ol>
+
+      <article className="mt-10 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h3 className="text-lg font-medium text-zinc-900">
+          {cv.fieldDecade.periodLabel} : {cv.fieldDecade.title}
+        </h3>
+        <p className="mt-2 text-sm text-zinc-600">{cv.fieldDecade.summary}</p>
+        <div className="mt-4 space-y-4">
+          {cv.fieldDecade.sections.map((sec, secIdx) => (
+            <div key={sec.title ?? `sec-${secIdx}`}>
+              {sec.title ? (
+                <h4 className="text-sm font-medium text-zinc-900">{sec.title}</h4>
+              ) : null}
+              <ul
+                className={`list-disc space-y-1 pl-4 text-sm text-zinc-700 ${sec.title ? 'mt-2' : ''}`}
+              >
+                {sec.items.map((i) => (
+                  <li key={i}>{i}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </article>
+    </CollapsibleSection>
+  )
+}
+
+export function SectionFormation({ cv }: { cv: CvDocument }) {
+  return (
+    <CollapsibleSection
+      headingClassName="text-lg font-semibold tracking-tight text-zinc-900"
+      headingId="formation-titre"
+      sectionClassName="font-mono text-[0.95em]"
+      sectionId="formation"
+      title="Formation & compétences"
+    >
+      <div className="space-y-4">
+        {cv.education.map((ed) => (
+          <div
+            className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+            key={ed.id}
+          >
+            <p className="text-xs text-zinc-500">{ed.periodLabel}</p>
+            <p className="mt-1 font-medium text-zinc-900">{ed.degree}</p>
+            <p className="text-sm text-zinc-600">{ed.institution}</p>
+            {ed.details ? (
+              <p className="mt-2 text-sm text-zinc-700">{ed.details}</p>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-medium text-zinc-900">Tech</h3>
+          <ul className="mt-2 space-y-1 text-sm text-zinc-600">
+            {cv.skills.tech.map((s) => (
+              <li key={s.name}>{s.name}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-medium text-zinc-900">Outils</h3>
+          <ul className="mt-2 space-y-1 text-sm text-zinc-600">
+            {cv.skills.tools.map((s) => (
+              <li key={s.name}>{s.name}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-medium text-zinc-900">Langues</h3>
+          <ul className="mt-2 space-y-1 text-sm text-zinc-600">
+            {cv.skills.languages.map((s) => (
+              <li key={s.name}>
+                {s.name}
+                {s.level ? ` — ${s.level}` : ''}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </CollapsibleSection>
+  )
+}
+
+/** Sous-section repliable (ex. Culture, Physique quantique) dans Personal Stack */
+function CollapsibleInnerBlock({
+  blockId,
+  defaultOpen = true,
+  titleSlot,
+  collapsedExtra,
+  toggleAriaName,
+  children,
+}: {
+  blockId: string
+  defaultOpen?: boolean
+  titleSlot: ReactNode
+  collapsedExtra?: ReactNode
+  /** Libellé pour aria-label (ex. « Culture », « Physique quantique ») */
+  toggleAriaName: string
+  children: ReactNode
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  const panelId = `${blockId}-inner-panel`
+
+  return (
+    <div className="pb-8 last:pb-0">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200/80 pb-3">
+        <div className="min-w-0 flex-1">
+          {titleSlot}
+          {!open && collapsedExtra ? (
+            <div className="mt-2">{collapsedExtra}</div>
+          ) : null}
+        </div>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={
+            open ? `Replier — ${toggleAriaName}` : `Déplier — ${toggleAriaName}`
+          }
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        {children}
+        <CollapseChevronFooter
+          ariaLabel={`Replier — ${toggleAriaName}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </div>
+  )
+}
+
+function culturePanelSlug(label: string): string {
+  return label.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase()
+}
+
+function cultureMediaCountWord(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes('série')) return 'séries'
+  if (l.includes('film')) return 'films'
+  return 'fiches'
+}
+
+/** Entrée texte (ex. livre) — sous-niveau de Culture, fermé par défaut */
+function CultureTextExpandable({ label, value }: { label: string; value: string }) {
+  const [open, setOpen] = useState(false)
+  const panelId = `culture-text-${culturePanelSlug(label)}`
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-zinc-200/80 pb-3">
+        <div className="min-w-0 flex-1">
+          <h4 className="text-sm font-semibold tracking-tight text-zinc-800">
+            {label}
+          </h4>
+        </div>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={open ? `Replier — ${label}` : `Déplier — ${label}`}
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon className="h-4 w-4" expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        <p className="text-sm leading-relaxed text-zinc-700">{value}</p>
+        <CollapseChevronFooter
+          ariaLabel={`Replier — ${label}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </div>
+  )
+}
+
+function CultureMediaExpandable({
+  label,
+  items,
+}: {
+  label: string
+  items: CultureMediaCard[]
+}) {
+  const [open, setOpen] = useState(false)
+  const panelId = `culture-media-${culturePanelSlug(label)}`
+  const countWord = cultureMediaCountWord(label)
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-zinc-200/80 pb-3">
+        <div className="min-w-0 flex-1">
+          <h4 className="text-sm font-semibold tracking-tight text-zinc-800">
+            {label}
+          </h4>
+          {!open ? (
+            <p className="mt-1 text-xs text-zinc-500">
+              {items.length} {countWord}
+            </p>
+          ) : null}
+        </div>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={open ? `Replier — ${label}` : `Déplier — ${label}`}
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon className="h-4 w-4" expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        <ul className="space-y-10">
+          {items.map((item, idx) => {
+            const posterLeft = idx % 2 === 0
+            return (
+              <li key={item.title}>
+                <article
+                  className={`flex flex-col gap-4 sm:flex-row sm:items-center ${posterLeft ? '' : 'sm:flex-row-reverse'}`}
+                >
+                  <div className="mx-auto w-[9.5rem] shrink-0 sm:mx-0">
+                    <img
+                      alt={`Visuel : ${item.title}`}
+                      className="aspect-[2/3] w-full rounded-lg border border-zinc-200 bg-zinc-100 object-cover shadow-sm"
+                      height="216"
+                      loading="lazy"
+                      src={item.posterUrl}
+                      width="144"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1 space-y-1.5 text-center sm:px-3 sm:text-left">
+                    <h5 className="text-base font-semibold text-zinc-900">
+                      {item.title}
+                    </h5>
+                    <p className="text-sm text-zinc-600">
+                      <span className="font-medium text-zinc-800">
+                        {item.creditLabel}
+                      </span>{' '}
+                      — {item.credit}
+                    </p>
+                    <p className="text-sm text-zinc-600">
+                      <span className="font-medium text-zinc-800">Année</span>{' '}
+                      — {item.year}
+                    </p>
+                  </div>
+                </article>
+              </li>
+            )
+          })}
+        </ul>
+        <CollapseChevronFooter
+          ariaLabel={`Replier — ${label}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </div>
+  )
+}
+
+function CultureBlock({ item }: { item: PersonalStackCultureItem }) {
+  return (
+    <CollapsibleInnerBlock
+      blockId="personal-culture"
+      defaultOpen
+      titleSlot={
+        <h3 className="text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl">
+          {item.title}
+        </h3>
+      }
+      toggleAriaName={item.title}
+    >
+      <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/80 p-3 shadow-sm ring-1 ring-zinc-100/80 sm:p-4">
+        <div className="flex flex-col gap-8">
+          {item.entries.map((row) => {
+            if (row.media && row.media.length > 0) {
+              return (
+                <div key={row.label}>
+                  <CultureMediaExpandable items={row.media} label={row.label} />
+                </div>
+              )
+            }
+            if (row.value?.trim()) {
+              return (
+                <div key={row.label}>
+                  <CultureTextExpandable label={row.label} value={row.value} />
+                </div>
+              )
+            }
+            return null
+          })}
+        </div>
+      </div>
+    </CollapsibleInnerBlock>
+  )
+}
+
+/** Segments repliables : intro = subtitleOpen, puis chaque block.heading */
+function buildQuantumSegments(item: PersonalStackPortfolioItem): {
+  title: string
+  text: string
+}[] {
+  return item.blocks.map((b, i) => {
+    const isIntro = i === 0 && !b.heading?.trim()
+    const title = isIntro
+      ? item.subtitleOpen
+      : (b.heading?.trim() || `Partie ${i + 1}`)
+    return { title, text: b.text }
+  })
+}
+
+/** Sous-bloc Physique quantique (titre + texte multi-paragraphes), fermé par défaut */
+function QuantumSegmentExpandable({
+  portfolioId,
+  segmentIndex,
+  title,
+  text,
+}: {
+  portfolioId: string
+  segmentIndex: number
+  title: string
+  text: string
+}) {
+  const [open, setOpen] = useState(false)
+  const panelId = `${portfolioId}-seg-${segmentIndex}-${culturePanelSlug(title)}`
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-violet-200/60 pb-3">
+        <div className="min-w-0 flex-1">
+          <h4 className="text-sm font-semibold tracking-tight text-zinc-800">
+            {title}
+          </h4>
+        </div>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={open ? `Replier — ${title}` : `Déplier — ${title}`}
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon className="h-4 w-4" expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        <div className="space-y-3 text-sm leading-relaxed text-zinc-700">
+          {text.split(/\n\n+/).map((para, j) => (
+            <p key={j}>{para}</p>
+          ))}
+        </div>
+        <CollapseChevronFooter
+          ariaLabel={`Replier — ${title}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </div>
+  )
+}
+
+function QuantumPortfolioCard({
+  item,
+  onShuffleReality,
+  onResetOrder,
+}: {
+  item: PersonalStackPortfolioItem
+  onShuffleReality: () => void
+  onResetOrder: () => void
+}) {
+  const segments = buildQuantumSegments(item)
+
+  return (
+    <CollapsibleInnerBlock
+      blockId={item.id}
+      collapsedExtra={
+        item.teaserClosed?.trim() ? (
+          <p className="text-sm text-zinc-600">{item.teaserClosed}</p>
+        ) : undefined
+      }
+      defaultOpen={false}
+      titleSlot={
+        <>
+          {item.badge?.trim() ? (
+            <p className="text-[0.65rem] font-medium uppercase tracking-wider text-zinc-400">
+              {item.badge}
+            </p>
+          ) : null}
+          <h3
+            className={`text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl ${item.badge?.trim() ? 'mt-1' : ''}`}
+          >
+            {item.category}
+          </h3>
+        </>
+      }
+      toggleAriaName={item.category}
+    >
+      <div className="rounded-xl border border-violet-200/80 bg-violet-50/50 p-3 shadow-sm ring-1 ring-violet-100/70 sm:p-4">
+        <div className="flex flex-col gap-8">
+          {segments.map((seg, idx) => (
+            <QuantumSegmentExpandable
+              key={`${seg.title}-${idx}`}
+              portfolioId={item.id}
+              segmentIndex={idx}
+              text={seg.text}
+              title={seg.title}
+            />
+          ))}
+        </div>
+      </div>
+      <p className="mt-6 text-sm font-medium text-zinc-800">
+        {item.practicePrompt}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          className="rounded-lg border border-violet-300 bg-violet-50 px-3 py-2 text-xs font-medium text-violet-900 hover:bg-violet-100"
+          onClick={onShuffleReality}
+          type="button"
+        >
+          Générer ma Réalité
+        </button>
+        <button
+          className="rounded-lg border border-zinc-300 bg-zinc-100 px-3 py-2 text-xs font-medium text-zinc-800 hover:bg-zinc-200"
+          onClick={onResetOrder}
+          type="button"
+        >
+          Revenir au déterminisme
+        </button>
+      </div>
+    </CollapsibleInnerBlock>
+  )
+}
+
+export function SectionPersonalStack({
+  cv,
+  onShuffleReality,
+  onResetOrder,
+}: {
+  cv: CvDocument
+  onShuffleReality: () => void
+  onResetOrder: () => void
+}) {
+  return (
+    <CollapsibleSection
+      headingId="titre-personal-stack"
+      panelClassName="font-mono text-[0.95em]"
+      sectionId="personal-stack"
+      title={cv.personalStack.title}
+    >
+      <div className="text-sm text-zinc-600">
+        {cv.personalStack.items.map((entry, idx) => {
+          if (entry.type === 'line') {
+            const isMajorTier = entry.tier === 'major'
+            return (
+              <CollapsibleInnerBlock
+                blockId={`personal-line-${idx}`}
+                defaultOpen={entry.defaultOpen !== false}
+                key={`${entry.label}-${idx}`}
+                titleSlot={
+                  <h3
+                    className={
+                      isMajorTier
+                        ? 'text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl'
+                        : 'text-base font-medium tracking-tight text-zinc-900'
+                    }
+                  >
+                    {entry.label}
+                  </h3>
+                }
+                toggleAriaName={entry.label}
+              >
+                {isMajorTier ? (
+                  <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/80 p-3 shadow-sm ring-1 ring-zinc-100/80 sm:p-4">
+                    <div
+                      className={
+                        entry.illustrationUrl?.trim()
+                          ? 'flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6'
+                          : ''
+                      }
+                    >
+                      <p className="min-w-0 flex-1 text-sm leading-relaxed text-zinc-700">
+                        {entry.value}
+                      </p>
+                      {entry.illustrationUrl?.trim() ? (
+                        <div className="mx-auto flex shrink-0 justify-center sm:mx-0">
+                          <img
+                            alt="Coupe"
+                            className="h-28 w-auto max-w-[7.5rem] object-contain drop-shadow-sm sm:h-32"
+                            height="128"
+                            loading="lazy"
+                            src={entry.illustrationUrl.trim()}
+                            width="96"
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : (
+                  <p>{entry.value}</p>
+                )}
+              </CollapsibleInnerBlock>
+            )
+          }
+          if (entry.type === 'culture') {
+            return <CultureBlock item={entry} key="culture" />
+          }
+          return (
+            <QuantumPortfolioCard
+              item={entry}
+              key={entry.id}
+              onResetOrder={onResetOrder}
+              onShuffleReality={onShuffleReality}
+            />
+          )
+        })}
+      </div>
+    </CollapsibleSection>
+  )
+}
