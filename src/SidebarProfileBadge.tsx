@@ -1,6 +1,6 @@
 /**
  * Bloc profil dans la barre latérale : photo, identité, liens de contact.
- * L’id `nav-contact` sert au défilement depuis la barre de raccourcis mobile.
+ * L’id `nav-contact` sert d’ancre pour le bloc coordonnées.
  */
 import { publicAssetUrl } from './publicAssetUrl'
 import type { NavContact, Profile } from './types/cv'
@@ -31,8 +31,9 @@ function resolveProfilePhoto(photoUrl: string | null): string | null {
 }
 
 const linkRowClass =
-  'flex items-start gap-2.5 rounded-lg px-2 py-1.5 text-xs leading-snug text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900'
-const iconClass = 'mt-0.5 h-4 w-4 shrink-0 text-zinc-400'
+  'flex items-start gap-1.5 rounded-lg px-1.5 py-1 text-[11px] leading-snug text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 md:gap-2.5 md:px-2 md:py-1.5 md:text-xs'
+const iconClass =
+  'mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-400 md:h-4 md:w-4'
 
 export function SidebarProfileBadge({
   profile,
@@ -48,8 +49,8 @@ export function SidebarProfileBadge({
   const githubHandle = contact.github.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '')
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-gradient-to-b from-white to-zinc-50/80 shadow-sm ring-1 ring-zinc-100/80">
-      <div className="relative flex aspect-[4/3] w-full items-center justify-center bg-white px-2 pb-1 pt-2 sm:px-2.5 sm:pb-1 sm:pt-2.5">
+    <div className="overflow-hidden rounded-xl border border-zinc-200/90 bg-gradient-to-b from-white to-zinc-50/80 shadow-sm ring-1 ring-zinc-100/80 md:rounded-2xl">
+      <div className="relative flex aspect-[5/3] w-full items-center justify-center bg-white px-1.5 pb-0.5 pt-1.5 md:aspect-[4/3] md:px-2.5 md:pb-1 md:pt-2.5">
         {photoSrc ? (
           <img
             alt={`Portrait — ${profile.name}`}
@@ -60,7 +61,7 @@ export function SidebarProfileBadge({
         ) : (
           <div
             aria-hidden
-            className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-200 to-zinc-300 text-3xl font-bold tracking-tight text-zinc-600"
+            className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-200 to-zinc-300 text-2xl font-bold tracking-tight text-zinc-600 md:text-3xl"
           >
             {initialsFromName(profile.name)}
           </div>
@@ -79,12 +80,12 @@ export function SidebarProfileBadge({
         {(profile.birthDateLabel?.trim() ||
           profile.familyStatus?.trim() ||
           profile.driverLicense?.trim()) ? (
-          <div className="mt-2 space-y-1 text-center text-xs leading-snug text-zinc-600">
+          <div className="mt-1.5 space-y-0.5 text-center text-[10px] leading-snug text-zinc-600 md:mt-2 md:space-y-1 md:text-xs">
             {profile.birthDateLabel?.trim() ? (
               <p className="flex items-center justify-center gap-2">
                 <svg
                   aria-hidden
-                  className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                  className="h-3 w-3 shrink-0 text-zinc-400 md:h-3.5 md:w-3.5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.75}
@@ -109,7 +110,7 @@ export function SidebarProfileBadge({
         ) : null}
 
         <ul
-          className="mt-3 space-y-0.5 border-t border-zinc-200/70 pt-3"
+          className="mt-2 space-y-0 border-t border-zinc-200/70 pt-2 md:mt-3 md:space-y-0.5 md:pt-3"
           id="nav-contact"
         >
         <li>

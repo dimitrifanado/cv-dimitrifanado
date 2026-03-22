@@ -1,6 +1,6 @@
 /**
  * Application CV : sidebar (profil, navigation, export PDF) + contenu scrollable.
- * Sur mobile, une barre fixe en bas donne l’accès à Contact, Navigation et PDF.
+ * Sur mobile, l’en-tête ouvre la barre latérale (contact, navigation, PDF).
  */
 import {
   Fragment,
@@ -62,13 +62,16 @@ function sortExperience(items: Experience[]) {
 function NavLinks({
   onNavigate,
   className = '',
+  id,
 }: {
   onNavigate?: () => void
   className?: string
+  id?: string
 }) {
   return (
     <ul
-      className={`relative ml-1 space-y-0.5 border-l border-zinc-200 pl-6 ${className}`.trim()}
+      className={`relative ml-1 space-y-0.5 border-l border-zinc-200 pl-5 md:pl-6 ${className}`.trim()}
+      id={id}
     >
       {navItems.map((item) => (
         <li className="relative" key={item.id}>
@@ -77,7 +80,7 @@ function NavLinks({
             className="absolute -left-[29px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white bg-zinc-400 shadow"
           />
           <a
-            className="block rounded-lg py-2 pl-1 pr-2 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+            className="block rounded-lg py-1.5 pl-1 pr-2 text-xs text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 md:py-2 md:text-sm"
             href={`#${item.id}`}
             onClick={onNavigate}
           >
@@ -118,17 +121,6 @@ export default function App() {
   const sortedExperience = useMemo(() => sortExperience(cv.experience), [])
 
   const closeMobileNav = () => setMobileNavOpen(false)
-
-  /** Ouvre la sidebar puis fait défiler vers une ancre (après l’animation du tiroir). */
-  const openMobileNavAndScrollTo = useCallback((elementId: string) => {
-    setMobileNavOpen(true)
-    window.setTimeout(() => {
-      document.getElementById(elementId)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      })
-    }, 280)
-  }, [])
 
   useEffect(() => {
     if (!mobileNavOpen) return
@@ -200,16 +192,17 @@ export default function App() {
 
       <aside
         aria-label="Navigation"
-        className={`fixed left-0 top-0 z-50 flex h-svh w-[min(16rem,85vw)] flex-col border-r border-zinc-200 bg-white shadow-sm transition-transform duration-200 ease-out md:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-svh max-h-[100dvh] w-[min(16rem,85vw)] flex-col overflow-hidden border-r border-zinc-200 bg-white shadow-sm transition-transform duration-200 ease-out md:translate-x-0 ${
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         id="sidebar-nav"
       >
-        <div className="border-b border-zinc-100">
-          <div className="flex justify-end px-3 pt-2 md:hidden">
+        {/* Une seule zone défilante : évite le blocage sur petits écrans */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
+          <div className="flex shrink-0 justify-end px-2 pt-1.5 md:hidden">
             <button
               aria-label="Fermer le menu"
-              className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+              className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
               onClick={closeMobileNav}
               type="button"
             >
@@ -225,85 +218,87 @@ export default function App() {
               </svg>
             </button>
           </div>
-          <div className="px-3 pb-4 pt-1 md:px-4 md:pb-4 md:pt-4">
+          <div className="shrink-0 px-2 pb-2 pt-0 md:px-4 md:pb-4 md:pt-4">
             <SidebarProfileBadge
               contact={cv.navContact}
               onNavigate={closeMobileNav}
               profile={cv.profile}
             />
           </div>
-        </div>
-        <nav
-          aria-label="Navigation principale"
-          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4"
-        >
-          <div className="mx-auto w-full max-w-[13rem] shrink-0 py-1 my-auto">
-            <NavLinks onNavigate={closeMobileNav} />
-          </div>
-        </nav>
-        <div className="border-t border-zinc-100 px-3 py-3 md:px-4">
-          <button
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400"
-            onClick={() => {
-              setPdfModalOpen(true)
-              setPdfError(null)
-            }}
-            type="button"
+          <nav
+            aria-label="Navigation principale"
+            className="shrink-0 px-2 pb-2 md:px-3 md:pb-4"
           >
-            <svg
-              aria-hidden
-              className="h-4 w-4 shrink-0 text-zinc-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.75}
-              viewBox="0 0 24 24"
+            <div className="mx-auto w-full max-w-[13rem] py-1 md:py-2">
+              <NavLinks id="sidebar-nav-links" onNavigate={closeMobileNav} />
+            </div>
+          </nav>
+          <div className="mt-auto shrink-0 border-t border-zinc-100 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:mt-0 md:px-4 md:py-3">
+            <button
+              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-2 text-xs font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 md:gap-2 md:rounded-xl md:px-3 md:py-2.5 md:text-sm"
+              onClick={() => {
+                setPdfModalOpen(true)
+                setPdfError(null)
+              }}
+              type="button"
             >
-              <path
-                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Générer un PDF
-          </button>
+              <svg
+                aria-hidden
+                className="h-3.5 w-3.5 shrink-0 text-zinc-500 md:h-4 md:w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.75}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Générer un PDF
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Décalage = largeur fixe de la sidebar sur md+ (16 rem). */}
       <div className="md:pl-64">
-        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-zinc-200/80 bg-zinc-50/95 px-4 py-3 backdrop-blur-md md:hidden">
+        <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-zinc-50/95 px-3 py-2 backdrop-blur-md md:hidden">
           <button
             aria-controls="sidebar-nav"
             aria-expanded={mobileNavOpen}
-            aria-label="Ouvrir le menu"
-            className="rounded-lg border border-zinc-200 bg-white p-2 text-zinc-700 shadow-sm hover:bg-zinc-50"
+            aria-label="Ouvrir le menu : contact, navigation et export PDF"
+            className="flex w-full min-w-0 items-center gap-2.5 rounded-lg py-1 text-left transition hover:bg-zinc-100/80"
             onClick={() => setMobileNavOpen(true)}
             type="button"
           >
-            <svg
-              aria-hidden
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.75}
-              viewBox="0 0 24 24"
-            >
-              <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-            </svg>
+            <span className="shrink-0 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-700 shadow-sm">
+              <svg
+                aria-hidden
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.75}
+                viewBox="0 0 24 24"
+              >
+                <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
+              </svg>
+            </span>
+            <span className="min-w-0 truncate text-xs font-semibold tracking-tight text-zinc-800">
+              Contact | Nav | PDF
+            </span>
           </button>
-          <span className="truncate text-sm font-medium text-zinc-800">
-            Navigation
-          </span>
         </header>
 
-        <main className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-9 px-4 pb-24 pt-6 md:gap-10 md:pb-16 md:pt-8">
+        <main className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-9 px-4 pb-8 pt-6 md:gap-10 md:pb-16 md:pt-8">
           {DEFAULT_SECTION_ORDER.map((key) => (
             <Fragment key={key}>{renderSection(key)}</Fragment>
           ))}
         </main>
 
-        <footer className="border-t border-zinc-200 px-4 py-6 pb-24 text-center text-xs text-zinc-500 md:pb-6">
+        <footer className="border-t border-zinc-200 px-4 py-6 pb-8 text-center text-xs text-zinc-500 md:pb-6">
           <p>Mis à jour le {cv.meta.lastUpdated}</p>
           <p className="mt-2">
             Affiches de films &amp; séries :{' '}
@@ -382,76 +377,6 @@ export default function App() {
           </div>
         </div>
       ) : null}
-
-      {/* Raccourcis visibles uniquement sur mobile : la sidebar est masquée par défaut. */}
-      <nav
-        aria-label="Raccourcis : contact, menu de navigation, export PDF"
-        className="fixed bottom-0 left-0 right-0 z-[55] flex gap-1 border-t border-zinc-200 bg-white/95 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-md md:hidden"
-      >
-        <button
-          className="flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium text-zinc-700 transition hover:bg-zinc-100 active:bg-zinc-200"
-          onClick={() => openMobileNavAndScrollTo('nav-contact')}
-          type="button"
-        >
-          <svg
-            aria-hidden
-            className="h-5 w-5 text-zinc-500"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.75}
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Contact
-        </button>
-        <button
-          className="flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium text-zinc-700 transition hover:bg-zinc-100 active:bg-zinc-200"
-          onClick={() => openMobileNavAndScrollTo('sidebar-nav-links')}
-          type="button"
-        >
-          <svg
-            aria-hidden
-            className="h-5 w-5 text-zinc-500"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.75}
-            viewBox="0 0 24 24"
-          >
-            <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-          </svg>
-          Navigation
-        </button>
-        <button
-          className="flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium text-zinc-700 transition hover:bg-zinc-100 active:bg-zinc-200"
-          onClick={() => {
-            setPdfModalOpen(true)
-            setPdfError(null)
-          }}
-          type="button"
-        >
-          <svg
-            aria-hidden
-            className="h-5 w-5 text-zinc-500"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.75}
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          PDF
-        </button>
-      </nav>
     </div>
   )
 }
