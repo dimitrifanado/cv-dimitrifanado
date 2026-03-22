@@ -1,3 +1,6 @@
+/**
+ * Modèle TypeScript du fichier `data/cv.json` (schéma unique, pas de validation runtime).
+ */
 export type Badge = {
   id: string
   label: string
@@ -11,6 +14,12 @@ export type Profile = {
   pitch: string
   badges: Badge[]
   photoUrl: string | null
+  /** Date de naissance affichée (ex. « 8 mai 1986 ») */
+  birthDateLabel?: string | null
+  /** Situation familiale (ex. « Célibataire, sans enfant ») */
+  familyStatus?: string | null
+  /** Permis (ex. « Permis B ») */
+  driverLicense?: string | null
 }
 
 export type ProjectHighlight = {
@@ -33,6 +42,12 @@ export type FeaturedProject = {
   }
 }
 
+/** Image affichée dans le portefeuille repliable d’une expérience (`/portfolio/...` sous `public/`) */
+export type ExperiencePortfolioImage = {
+  src: string
+  alt: string
+}
+
 export type Experience = {
   id: string
   company: string
@@ -45,6 +60,19 @@ export type Experience = {
   summary: string
   bullets: string[]
   tags: string[]
+  /**
+   * Entrée timeline dédiée : pas de ligne période · entreprise · lieu,
+   * pas de résumé visible par défaut — uniquement le titre (role) + galerie repliable.
+   */
+  timelinePortfolioEntry?: boolean
+  /** Galerie optionnelle (chevron), ex. photos du poste */
+  portfolioGallery?: {
+    /** Libellé du bandeau (défaut : « Portfolio ») */
+    label?: string
+    /** Dossier sous `public/` (affiché dans le message quand il n’y a pas encore d’images) */
+    publicSubfolder?: string
+    images: ExperiencePortfolioImage[]
+  }
 }
 
 export type FieldSection = {
@@ -55,8 +83,11 @@ export type FieldSection = {
 
 export type FieldDecade = {
   id: string
+  /** Titre du poste (comme `role` sur une expérience) */
   title: string
   periodLabel: string
+  /** Texte sur la ligne grise après la période (équivalent « entreprise / lieu ») */
+  metaSubtitle?: string | null
   startDate: string
   endDate: string
   summary: string
@@ -108,7 +139,7 @@ export type CultureMediaCard = {
   creditLabel: string
   credit: string
   year: number
-  /** Chemin public (ex. /posters/….svg) ou URL absolue */
+  /** URL absolue (ex. CDN TMDB) ou chemin local sous /public */
   posterUrl: string
 }
 

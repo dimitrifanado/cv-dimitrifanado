@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 
+/* Polices de marque (corporate + mono) et styles globaux du document. */
 @theme {
   /* Corps de texte général */
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,

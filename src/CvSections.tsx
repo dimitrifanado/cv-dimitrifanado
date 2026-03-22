@@ -1,4 +1,9 @@
-import { useState, type ReactNode } from 'react'
+/**
+ * Sections du CV (À propos, projet, parcours, compétences, formation, personal stack).
+ * Composants repliables, galeries et liens — données issues de `CvDocument`.
+ */
+import { useEffect, useState, type ReactNode } from 'react'
+import { publicAssetUrl } from './publicAssetUrl'
 import type {
   CultureMediaCard,
   CvDocument,
@@ -291,6 +296,236 @@ export function SectionProjet({
   )
 }
 
+/** Liste à puces d’une expérience : panneau type portefeuille, fermé par défaut */
+function ParcoursExperienceBullets({
+  jobId,
+  jobLabel,
+  bullets,
+  borderClassName,
+}: {
+  jobId: string
+  /** Pour aria-label (ex. rôle + entreprise) */
+  jobLabel: string
+  bullets: string[]
+  borderClassName: string
+}) {
+  const [open, setOpen] = useState(false)
+  const panelId = `parcours-${jobId}-bullets`
+  const count = bullets.length
+  if (count === 0) return null
+
+  return (
+    <div className="mt-3">
+      <div
+        className={`flex flex-wrap items-start justify-between gap-2 border-b pb-3 ${borderClassName}`}
+      >
+        <h4 className="text-sm font-semibold tracking-tight text-zinc-800">
+          Points clés
+          {!open ? (
+            <span className="ml-1.5 font-normal text-zinc-500">
+              ({count})
+            </span>
+          ) : null}
+        </h4>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={
+            open
+              ? `Replier les points clés — ${jobLabel}`
+              : `Déplier les points clés — ${jobLabel}`
+          }
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon className="h-4 w-4" expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        <ul className="list-disc space-y-1.5 pl-4 text-sm text-zinc-700">
+          {bullets.map((b, i) => (
+            <li key={`${jobId}-b-${i}`}>{b}</li>
+          ))}
+        </ul>
+        <CollapseChevronFooter
+          ariaLabel={`Replier les points clés — ${jobLabel}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+    </div>
+  )
+}
+
+/** Galerie optionnelle (miniatures) : même pattern chevron que les points clés */
+function ParcoursExperiencePortfolio({
+  jobId,
+  jobLabel,
+  gallery,
+  borderClassName,
+  displayTitle,
+  headingLevel = 'secondary',
+}: {
+  jobId: string
+  jobLabel: string
+  gallery: NonNullable<Experience['portfolioGallery']>
+  borderClassName: string
+  /** Titre à côté du chevron (ex. « Aperçu de portfolio » ou libellé de galerie) */
+  displayTitle: string
+  /** `primary` = même poids visuel que le titre de poste (h3) */
+  headingLevel?: 'primary' | 'secondary'
+}) {
+  const [open, setOpen] = useState(false)
+  const [enlargedIndex, setEnlargedIndex] = useState<number | null>(null)
+  const panelId = `parcours-${jobId}-portfolio`
+  const images = gallery.images ?? []
+  const count = images.length
+  const folderHint =
+    gallery.publicSubfolder?.replace(/\/$/, '').trim() || 'portfolio/…'
+  const isPrimary = headingLevel === 'primary'
+  const TitleTag = isPrimary ? 'h3' : 'h4'
+  const titleClass = isPrimary
+    ? 'text-base font-semibold text-zinc-900'
+    : 'text-sm font-semibold tracking-tight text-zinc-800'
+
+  useEffect(() => {
+    if (enlargedIndex === null) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setEnlargedIndex(null)
+    }
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [enlargedIndex])
+
+  const enlarged =
+    enlargedIndex !== null ? images[enlargedIndex] : null
+  const enlargedSrc = enlarged ? publicAssetUrl(enlarged.src) : ''
+
+  return (
+    <div className={isPrimary ? 'mt-1' : 'mt-3'}>
+      <div
+        className={`flex flex-wrap items-start justify-between gap-2 border-b pb-3 ${borderClassName}`}
+      >
+        <TitleTag className={titleClass}>
+          {displayTitle}
+          {!open && count > 0 ? (
+            <span className="ml-1.5 font-normal text-zinc-500">({count})</span>
+          ) : null}
+        </TitleTag>
+        <button
+          aria-controls={panelId}
+          aria-expanded={open}
+          aria-label={
+            open
+              ? `Replier le portefeuille — ${jobLabel}`
+              : `Déplier le portefeuille — ${jobLabel}`
+          }
+          className={CHEVRON_TOGGLE_BTN_CLASS}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+        >
+          <ChevronToggleIcon className="h-4 w-4" expanded={open} />
+        </button>
+      </div>
+      <AnimatedHeightPanel
+        id={panelId}
+        innerClassName={open ? 'mt-3 pt-3' : ''}
+        open={open}
+      >
+        {count > 0 ? (
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+            {images.map((img, i) => (
+              <li key={`${jobId}-p-${i}`}>
+                <button
+                  aria-label={`Agrandir : ${img.alt}`}
+                  className="group flex aspect-square w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-zinc-200/80 bg-white p-1.5 outline-none transition hover:border-zinc-300 hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2"
+                  onClick={() => setEnlargedIndex(i)}
+                  type="button"
+                >
+                  <img
+                    alt=""
+                    className="max-h-full max-w-full object-contain [image-rendering:auto]"
+                    decoding="async"
+                    draggable={false}
+                    loading="lazy"
+                    role="presentation"
+                    src={publicAssetUrl(img.src)}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm italic text-zinc-500">
+            Ajoute tes images dans{' '}
+            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-zinc-700">
+              public/{folderHint}/
+            </code>{' '}
+            puis déclare-les dans{' '}
+            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-zinc-700">
+              cv.json
+            </code>{' '}
+            sous{' '}
+            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-zinc-700">
+              portfolioGallery.images
+            </code>{' '}
+            (URL du site :{' '}
+            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-zinc-700">
+              /{folderHint}/nom-fichier.webp
+            </code>
+            ).
+          </p>
+        )}
+        <CollapseChevronFooter
+          ariaLabel={`Replier le portefeuille — ${jobLabel}`}
+          onCollapse={() => setOpen(false)}
+        />
+      </AnimatedHeightPanel>
+
+      {enlarged ? (
+        <div
+          aria-label={`Aperçu photo — ${enlarged.alt}`}
+          aria-modal="true"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm"
+          onClick={() => setEnlargedIndex(null)}
+          role="dialog"
+        >
+          <div
+            className="relative inline-flex max-h-[min(90vh,calc(100vh-2rem))] max-w-[min(96vw,calc(100vw-2rem))] items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              aria-label="Fermer l’aperçu"
+              className="absolute -right-2 -top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-600 bg-zinc-900 text-zinc-100 shadow-lg transition hover:bg-zinc-800 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 sm:-right-3 sm:-top-3"
+              onClick={() => setEnlargedIndex(null)}
+              type="button"
+            >
+              <span aria-hidden className="text-xl leading-none">
+                ×
+              </span>
+            </button>
+            <img
+              alt={enlarged.alt}
+              className="max-h-[min(90vh,calc(100vh-2rem))] max-w-[min(96vw,calc(100vw-2rem))] rounded-lg object-contain shadow-2xl ring-1 ring-white/10 [image-rendering:auto]"
+              decoding="async"
+              src={enlargedSrc}
+            />
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export function SectionParcours({
   cv,
   sortedExperience,
@@ -301,12 +536,30 @@ export function SectionParcours({
   return (
     <CollapsibleSection
       headingId="parcours-pro"
+      panelClassName="pl-4 sm:pl-5"
       sectionId="parcours"
       title="Parcours professionnel"
     >
       <ol className="relative space-y-8 border-l border-zinc-200 pl-6">
         {sortedExperience.map((job) => {
           const isCorporateRole = job.id === 'coopairs'
+          const isTimelinePortfolio = job.timelinePortfolioEntry === true
+          const jobLabel = isTimelinePortfolio
+            ? job.role
+            : `${job.role} — ${job.company}`.replace(/ — $/, '')
+          const bulletBorder = isCorporateRole
+            ? 'border-slate-200/90'
+            : 'border-zinc-200/80'
+          const showMetaLine =
+            !isTimelinePortfolio &&
+            Boolean(
+              job.periodLabel?.trim() ||
+                job.company?.trim() ||
+                job.country?.trim(),
+            )
+          const galleryTitle =
+            job.portfolioGallery?.label?.trim() ||
+            (isTimelinePortfolio ? job.role : 'Portfolio')
           return (
             <li
               className={`relative ${isCorporateRole ? 'font-corporate' : ''}`}
@@ -320,97 +573,111 @@ export function SectionParcours({
                     : 'bg-zinc-400'
                 }`}
               />
-              <p
-                className={`text-xs font-medium uppercase tracking-wide text-zinc-500 ${isCorporateRole ? 'tracking-wider' : ''}`}
-              >
-                {job.periodLabel}
-                {` · ${job.company}`}
-                {job.country ? ` · ${job.country}` : ''}
-              </p>
-              <h3 className="mt-1 text-base font-semibold text-zinc-900">
-                {job.role}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-                {job.summary}
-              </p>
-              <ul className="mt-3 list-disc space-y-1.5 pl-4 text-sm text-zinc-700">
-                {job.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {job.tags.map((t) => (
-                  <li key={t}>
-                    <span
-                      className={`rounded-md px-2 py-0.5 text-xs ${
-                        isCorporateRole
-                          ? 'bg-slate-100 text-slate-700'
-                          : 'bg-zinc-100 text-zinc-600'
-                      }`}
-                    >
-                      {t}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              {showMetaLine ? (
+                <p
+                  className={`text-xs font-medium uppercase tracking-wide text-zinc-500 ${isCorporateRole ? 'tracking-wider' : ''}`}
+                >
+                  {job.periodLabel}
+                  {job.company?.trim() ? ` · ${job.company.trim()}` : ''}
+                  {job.country?.trim() ? ` · ${job.country.trim()}` : ''}
+                </p>
+              ) : null}
+              {!isTimelinePortfolio ? (
+                <h3 className="mt-1 text-base font-semibold text-zinc-900">
+                  {job.role}
+                </h3>
+              ) : null}
+              {!isTimelinePortfolio && job.summary.trim() ? (
+                <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                  {job.summary}
+                </p>
+              ) : null}
+              <ParcoursExperienceBullets
+                borderClassName={bulletBorder}
+                bullets={job.bullets}
+                jobId={job.id}
+                jobLabel={jobLabel}
+              />
+              {job.portfolioGallery ? (
+                <ParcoursExperiencePortfolio
+                  borderClassName={bulletBorder}
+                  displayTitle={isTimelinePortfolio ? job.role : galleryTitle}
+                  gallery={job.portfolioGallery}
+                  headingLevel={isTimelinePortfolio ? 'primary' : 'secondary'}
+                  jobId={job.id}
+                  jobLabel={jobLabel}
+                />
+              ) : null}
+              {job.tags.length > 0 ? (
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {job.tags.map((t) => (
+                    <li key={t}>
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-xs ${
+                          isCorporateRole
+                            ? 'bg-slate-100 text-slate-700'
+                            : 'bg-zinc-100 text-zinc-600'
+                        }`}
+                      >
+                        {t}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </li>
           )
         })}
+        <li className="relative" key={cv.fieldDecade.id}>
+          <span
+            aria-hidden
+            className="absolute -left-[29px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-zinc-400 shadow"
+          />
+          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+            {cv.fieldDecade.periodLabel}
+            {cv.fieldDecade.metaSubtitle?.trim()
+              ? ` · ${cv.fieldDecade.metaSubtitle.trim()}`
+              : ''}
+          </p>
+          <h3 className="mt-1 text-base font-semibold text-zinc-900">
+            {cv.fieldDecade.title}
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+            {cv.fieldDecade.summary}
+          </p>
+          <ParcoursExperienceBullets
+            borderClassName="border-zinc-200/80"
+            bullets={cv.fieldDecade.sections.flatMap((sec) => sec.items)}
+            jobId={cv.fieldDecade.id}
+            jobLabel={`${cv.fieldDecade.title} — ${cv.fieldDecade.periodLabel}`}
+          />
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {cv.fieldDecade.tags.map((t) => (
+              <li key={t}>
+                <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                  {t}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </li>
       </ol>
-
-      <article className="mt-10 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h3 className="text-lg font-medium text-zinc-900">
-          {cv.fieldDecade.periodLabel} : {cv.fieldDecade.title}
-        </h3>
-        <p className="mt-2 text-sm text-zinc-600">{cv.fieldDecade.summary}</p>
-        <div className="mt-4 space-y-4">
-          {cv.fieldDecade.sections.map((sec, secIdx) => (
-            <div key={sec.title ?? `sec-${secIdx}`}>
-              {sec.title ? (
-                <h4 className="text-sm font-medium text-zinc-900">{sec.title}</h4>
-              ) : null}
-              <ul
-                className={`list-disc space-y-1 pl-4 text-sm text-zinc-700 ${sec.title ? 'mt-2' : ''}`}
-              >
-                {sec.items.map((i) => (
-                  <li key={i}>{i}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </article>
     </CollapsibleSection>
   )
 }
 
-export function SectionFormation({ cv }: { cv: CvDocument }) {
+export function SectionCompetences({ cv }: { cv: CvDocument }) {
   return (
     <CollapsibleSection
       headingClassName="text-lg font-semibold tracking-tight text-zinc-900"
-      headingId="formation-titre"
+      headingId="competences-titre"
       sectionClassName="font-mono text-[0.95em]"
-      sectionId="formation"
-      title="Formation & compétences"
+      sectionId="competences"
+      title="Compétences"
     >
-      <div className="space-y-4">
-        {cv.education.map((ed) => (
-          <div
-            className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
-            key={ed.id}
-          >
-            <p className="text-xs text-zinc-500">{ed.periodLabel}</p>
-            <p className="mt-1 font-medium text-zinc-900">{ed.degree}</p>
-            <p className="text-sm text-zinc-600">{ed.institution}</p>
-            {ed.details ? (
-              <p className="mt-2 text-sm text-zinc-700">{ed.details}</p>
-            ) : null}
-          </div>
-        ))}
-      </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-          <h3 className="text-sm font-medium text-zinc-900">Tech</h3>
+          <h3 className="text-sm font-medium text-zinc-900">Tech Stack</h3>
           <ul className="mt-2 space-y-1 text-sm text-zinc-600">
             {cv.skills.tech.map((s) => (
               <li key={s.name}>{s.name}</li>
@@ -436,6 +703,34 @@ export function SectionFormation({ cv }: { cv: CvDocument }) {
             ))}
           </ul>
         </div>
+      </div>
+    </CollapsibleSection>
+  )
+}
+
+export function SectionFormation({ cv }: { cv: CvDocument }) {
+  return (
+    <CollapsibleSection
+      headingClassName="text-lg font-semibold tracking-tight text-zinc-900"
+      headingId="formation-titre"
+      sectionClassName="font-mono text-[0.95em]"
+      sectionId="formation"
+      title="Formations"
+    >
+      <div className="space-y-4">
+        {cv.education.map((ed) => (
+          <div
+            className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+            key={ed.id}
+          >
+            <p className="text-xs text-zinc-500">{ed.periodLabel}</p>
+            <p className="mt-1 font-medium text-zinc-900">{ed.degree}</p>
+            <p className="text-sm text-zinc-600">{ed.institution}</p>
+            {ed.details ? (
+              <p className="mt-2 text-sm text-zinc-700">{ed.details}</p>
+            ) : null}
+          </div>
+        ))}
       </div>
     </CollapsibleSection>
   )
@@ -641,7 +936,7 @@ function CultureBlock({ item }: { item: PersonalStackCultureItem }) {
       blockId="personal-culture"
       defaultOpen
       titleSlot={
-        <h3 className="text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl">
+        <h3 className="text-base font-semibold tracking-tight text-zinc-900 sm:text-lg">
           {item.title}
         </h3>
       }
@@ -680,7 +975,7 @@ function buildQuantumSegments(item: PersonalStackPortfolioItem): {
   return item.blocks.map((b, i) => {
     const isIntro = i === 0 && !b.heading?.trim()
     const title = isIntro
-      ? item.subtitleOpen
+      ? item.subtitleOpen.trim() || 'Lecture'
       : (b.heading?.trim() || `Partie ${i + 1}`)
     return { title, text: b.text }
   })
@@ -767,7 +1062,7 @@ function QuantumPortfolioCard({
             </p>
           ) : null}
           <h3
-            className={`text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl ${item.badge?.trim() ? 'mt-1' : ''}`}
+            className={`text-base font-semibold tracking-tight text-zinc-900 sm:text-lg ${item.badge?.trim() ? 'mt-1' : ''}`}
           >
             {item.category}
           </h3>
@@ -840,8 +1135,8 @@ export function SectionPersonalStack({
                   <h3
                     className={
                       isMajorTier
-                        ? 'text-lg font-semibold tracking-tight text-zinc-900 sm:text-xl'
-                        : 'text-base font-medium tracking-tight text-zinc-900'
+                        ? 'text-base font-semibold tracking-tight text-zinc-900 sm:text-lg'
+                        : 'text-sm font-medium tracking-tight text-zinc-900'
                     }
                   >
                     {entry.label}
@@ -868,7 +1163,7 @@ export function SectionPersonalStack({
                             className="h-28 w-auto max-w-[7.5rem] object-contain drop-shadow-sm sm:h-32"
                             height="128"
                             loading="lazy"
-                            src={entry.illustrationUrl.trim()}
+                            src={publicAssetUrl(entry.illustrationUrl.trim())}
                             width="96"
                           />
                         </div>

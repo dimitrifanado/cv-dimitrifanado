@@ -10,7 +10,10 @@
     "subheadline": "Développeur autodidacte de Solutions Métier",
     "pitch": "Je relie le terrain du logement social, la réglementation locative et la solution opérationnelle.",
     "badges": [],
-    "photoUrl": null
+    "photoUrl": "/profile.JPG",
+    "birthDateLabel": "8 mai 1986",
+    "familyStatus": "Célibataire, sans enfant",
+    "driverLicense": "Permis B"
   },
   "navContact": {
     "phone": "07 82 72 89 48",
@@ -112,11 +115,68 @@
         "Data analysis : optimisation du tunnel de vente et de la rétention client (LTV / CRO)."
       ],
       "tags": ["International", "SEO", "Paid", "CRO", "LTV"]
+    },
+    {
+      "id": "studio-pierre-photo",
+      "company": "Studio Pierre Photo",
+      "country": "Saint-Tropez & Megève",
+      "role": "Photographe Argentique & Numérique",
+      "startDate": "2015-01-01",
+      "endDate": "2017-12-31",
+      "periodLabel": "2015 — 2017",
+      "summary": "De la chimie de l'argentique à la précision du numérique : une maîtrise de l'image sous toutes ses formes.",
+      "bullets": [
+        "Portrait studio à l'argentique.",
+        "Photos numériques et retouches.",
+        "Photos immobilières & hôtels.",
+        "Événementiel & terrain."
+      ],
+      "tags": ["Photographie", "Argentique", "Numérique", "Studio", "Événementiel"]
+    },
+    {
+      "id": "photo-indep-australie",
+      "company": "Indépendant",
+      "country": "Australie",
+      "role": "Photographe indépendant",
+      "startDate": "2014-01-01",
+      "endDate": "2016-12-31",
+      "periodLabel": "2014 — 2016",
+      "summary": "Une année passée à expérimenter la prise de vue. Photo animalière, astrophotographie, paysage…",
+      "bullets": [],
+      "tags": ["Photographie", "Australie", "Paysage", "Animalier", "Astrophotographie"]
+    },
+    {
+      "id": "portfolio-apercu-photo",
+      "company": "",
+      "country": null,
+      "role": "Aperçu de portfolio",
+      "startDate": "2014-01-01",
+      "endDate": "2016-12-31",
+      "periodLabel": "",
+      "summary": "",
+      "bullets": [],
+      "tags": [],
+      "timelinePortfolioEntry": true,
+      "portfolioGallery": {
+        "publicSubfolder": "portfolio/photos",
+        "images": [
+          { "src": "/portfolio/photos/1.jpg", "alt": "Photographie — portfolio (1)" },
+          { "src": "/portfolio/photos/2.jpg", "alt": "Photographie — portfolio (2)" },
+          { "src": "/portfolio/photos/3.jpg", "alt": "Photographie — portfolio (3)" },
+          { "src": "/portfolio/photos/4.jpg", "alt": "Photographie — portfolio (4)" },
+          { "src": "/portfolio/photos/5.jpg", "alt": "Photographie — portfolio (5)" },
+          { "src": "/portfolio/photos/6.jpg", "alt": "Photographie — portfolio (6)" },
+          { "src": "/portfolio/photos/7.jpg", "alt": "Photographie — portfolio (7)" },
+          { "src": "/portfolio/photos/8.jpg", "alt": "Photographie — portfolio (8)" },
+          { "src": "/portfolio/photos/9.jpg", "alt": "Photographie — portfolio (9)" }
+        ]
+      }
     }
   ],
   "fieldDecade": {
     "id": "ecole-du-terrain",
     "title": "L'école du terrain",
+    "metaSubtitle": "International",
     "periodLabel": "2004 - 2011",
     "startDate": "2004-01-01",
     "endDate": "2011-12-31",
@@ -182,17 +242,24 @@
   ],
   "skills": {
     "tech": [
-      { "name": "Python (IA)", "level": null },
-      { "name": "Tailwind CSS", "level": null },
-      { "name": "Prestashop", "level": null }
+      { "name": "Javascript", "level": null },
+      { "name": "React", "level": null },
+      { "name": "Tailwind", "level": null },
+      { "name": "HTML/CSS", "level": null },
+      { "name": "Prestashop", "level": null },
+      { "name": "Wordpress", "level": null }
     ],
     "tools": [
+      { "name": "VS Code", "level": null },
       { "name": "Cursor", "level": null },
-      { "name": "Suite Adobe", "level": null }
+      { "name": "Suite Adobe", "level": null },
+      { "name": "Microsoft 360°", "level": null },
+      { "name": "Reflex numérique", "level": null },
+      { "name": "Caméra", "level": null }
     ],
     "languages": [
       { "name": "Français", "level": "Maternel" },
-      { "name": "Anglais", "level": "C2 — bilingue" }
+      { "name": "Anglais", "level": "Bilingue" }
     ]
   },
   "personalStack": {
@@ -210,21 +277,21 @@
                 "creditLabel": "Réalisateur",
                 "credit": "Jaco Van Dormael",
                 "year": 2009,
-                "posterUrl": "/posters/mr-nobody.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg"
               },
               {
                 "title": "Interstellar",
                 "creditLabel": "Réalisateur",
                 "credit": "Christopher Nolan",
                 "year": 2014,
-                "posterUrl": "/posters/interstellar.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/1pnigkWWy8W032o9TKDneBa3eVK.jpg"
               },
               {
                 "title": "Barry Lyndon",
                 "creditLabel": "Réalisateur",
                 "credit": "Stanley Kubrick",
                 "year": 1975,
-                "posterUrl": "/posters/barry-lyndon.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/dOJtBSyI30wWc08UmyEKLsu4Rfk.jpg"
               }
             ]
           },
@@ -236,21 +303,21 @@
                 "creditLabel": "Créateur",
                 "credit": "Damon Lindelof",
                 "year": 2014,
-                "posterUrl": "/posters/the-leftovers.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/ri8xr223xBb2TeHX3GKypvQPV2B.jpg"
               },
               {
                 "title": "Lost",
                 "creditLabel": "Créateurs",
                 "credit": "J.J. Abrams, Damon Lindelof & Carlton Cuse",
                 "year": 2004,
-                "posterUrl": "/posters/lost.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/lJpYSqKmae4Rk57InDZoFa6mPzU.jpg"
               },
               {
                 "title": "Devs",
                 "creditLabel": "Créateur",
                 "credit": "Alex Garland",
                 "year": 2020,
-                "posterUrl": "/posters/devs.svg"
+                "posterUrl": "https://image.tmdb.org/t/p/w342/uv63iNWOh69bSJYJQZjiX6n8B3m.jpg"
               }
             ]
           },
@@ -297,7 +364,7 @@
         "label": "Football",
         "tier": "major",
         "defaultOpen": false,
-        "value": "Héritage paternel de souvenirs au Parc des Princes : Ici c'est Paaaaaaaris"
+        "value": "Héritage paternel de souvenirs au Parc des Princes : Ici c'est Paaaaaaaris !!"
       }
     ]
   }
