@@ -192,74 +192,74 @@ export default function App() {
 
       <aside
         aria-label="Navigation"
-        className={`fixed left-0 top-0 z-50 flex h-svh max-h-[100dvh] w-[min(16rem,85vw)] flex-col overflow-hidden border-r border-zinc-200 bg-white shadow-sm transition-transform duration-200 ease-out md:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-[100dvh] max-h-[100dvh] w-[min(16rem,85vw)] flex-col overflow-hidden border-r border-zinc-200 bg-white shadow-sm transition-transform duration-200 ease-out md:h-svh md:max-h-none md:translate-x-0 ${
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         id="sidebar-nav"
       >
-        {/* Une seule zone défilante : évite le blocage sur petits écrans */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
-          <div className="flex shrink-0 justify-end px-2 pt-1.5 md:hidden">
-            <button
-              aria-label="Fermer le menu"
-              className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
-              onClick={closeMobileNav}
-              type="button"
-            >
-              <svg
-                aria-hidden
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.75}
-                viewBox="0 0 24 24"
-              >
-                <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-          <div className="shrink-0 px-2 pb-2 pt-0 md:px-4 md:pb-4 md:pt-4">
-            <SidebarProfileBadge
-              contact={cv.navContact}
-              onNavigate={closeMobileNav}
-              profile={cv.profile}
-            />
-          </div>
-          <nav
-            aria-label="Navigation principale"
-            className="shrink-0 px-2 pb-2 md:px-3 md:pb-4"
+        {/* Pas de zone scroll : contenu compact mobile pour tout voir + PDF en bas. */}
+        <div className="flex shrink-0 justify-end px-2 pt-1.5 md:hidden">
+          <button
+            aria-label="Fermer le menu"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+            onClick={closeMobileNav}
+            type="button"
           >
-            <div className="mx-auto w-full max-w-[13rem] py-1 md:py-2">
-              <NavLinks id="sidebar-nav-links" onNavigate={closeMobileNav} />
-            </div>
-          </nav>
-          <div className="mt-auto shrink-0 border-t border-zinc-100 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:mt-0 md:px-4 md:py-3">
-            <button
-              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-2 text-xs font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 md:gap-2 md:rounded-xl md:px-3 md:py-2.5 md:text-sm"
-              onClick={() => {
-                setPdfModalOpen(true)
-                setPdfError(null)
-              }}
-              type="button"
+            <svg
+              aria-hidden
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              viewBox="0 0 24 24"
             >
-              <svg
-                aria-hidden
-                className="h-3.5 w-3.5 shrink-0 text-zinc-500 md:h-4 md:w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.75}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Générer un PDF
-            </button>
+              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div className="shrink-0 px-2 pb-1 pt-0 md:px-4 md:pb-3 md:pt-4">
+          <SidebarProfileBadge
+            contact={cv.navContact}
+            onNavigate={closeMobileNav}
+            profile={cv.profile}
+          />
+        </div>
+        <nav
+          aria-label="Navigation principale"
+          className="shrink-0 px-2 pb-1 md:px-3 md:pb-2"
+        >
+          <div className="mx-auto w-full max-w-[13rem] py-0 md:py-1">
+            <NavLinks id="sidebar-nav-links" onNavigate={closeMobileNav} />
           </div>
+        </nav>
+        {/* Mobile : pousse le PDF vers le bas sans scroll dans la colonne */}
+        <div aria-hidden className="min-h-0 flex-1 md:hidden" />
+        <div className="shrink-0 border-t border-zinc-100 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:px-4 md:py-3">
+          <button
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-2 text-xs font-medium text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 md:gap-2 md:rounded-xl md:px-3 md:py-2.5 md:text-sm"
+            onClick={() => {
+              setPdfModalOpen(true)
+              setPdfError(null)
+            }}
+            type="button"
+          >
+            <svg
+              aria-hidden
+              className="h-3.5 w-3.5 shrink-0 text-zinc-500 md:h-4 md:w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Générer un PDF
+          </button>
         </div>
       </aside>
 

@@ -50,7 +50,7 @@ export function SidebarProfileBadge({
 
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200/90 bg-gradient-to-b from-white to-zinc-50/80 shadow-sm ring-1 ring-zinc-100/80 md:rounded-2xl">
-      <div className="relative flex aspect-[5/3] w-full items-center justify-center bg-white px-1.5 pb-0.5 pt-1.5 md:aspect-[4/3] md:px-2.5 md:pb-1 md:pt-2.5">
+      <div className="relative flex h-[4.25rem] w-full shrink-0 items-center justify-center bg-white px-1 py-0.5 md:aspect-[4/3] md:h-auto md:px-2.5 md:py-0 md:pb-1 md:pt-2.5">
         {photoSrc ? (
           <img
             alt={`Portrait — ${profile.name}`}
@@ -68,9 +68,9 @@ export function SidebarProfileBadge({
         )}
       </div>
 
-      <div className="px-4 pb-4 pt-1">
+      <div className="px-2 pb-2 pt-0.5 md:px-4 md:pb-4 md:pt-1">
         <a
-          className="block text-center text-base font-semibold leading-snug tracking-tight text-zinc-900 transition-colors hover:text-zinc-600"
+          className="block text-center text-sm font-semibold leading-snug tracking-tight text-zinc-900 transition-colors hover:text-zinc-600 md:text-base"
           href="#apropos"
           onClick={onNavigate}
         >
