@@ -1034,15 +1034,7 @@ function QuantumSegmentExpandable({
   )
 }
 
-function QuantumPortfolioCard({
-  item,
-  onShuffleReality,
-  onResetOrder,
-}: {
-  item: PersonalStackPortfolioItem
-  onShuffleReality: () => void
-  onResetOrder: () => void
-}) {
+function QuantumPortfolioCard({ item }: { item: PersonalStackPortfolioItem }) {
   const segments = buildQuantumSegments(item)
 
   return (
@@ -1083,38 +1075,11 @@ function QuantumPortfolioCard({
           ))}
         </div>
       </div>
-      <p className="mt-6 text-sm font-medium text-zinc-800">
-        {item.practicePrompt}
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          className="rounded-lg border border-violet-300 bg-violet-50 px-3 py-2 text-xs font-medium text-violet-900 hover:bg-violet-100"
-          onClick={onShuffleReality}
-          type="button"
-        >
-          Générer ma Réalité
-        </button>
-        <button
-          className="rounded-lg border border-zinc-300 bg-zinc-100 px-3 py-2 text-xs font-medium text-zinc-800 hover:bg-zinc-200"
-          onClick={onResetOrder}
-          type="button"
-        >
-          Revenir au déterminisme
-        </button>
-      </div>
     </CollapsibleInnerBlock>
   )
 }
 
-export function SectionPersonalStack({
-  cv,
-  onShuffleReality,
-  onResetOrder,
-}: {
-  cv: CvDocument
-  onShuffleReality: () => void
-  onResetOrder: () => void
-}) {
+export function SectionPersonalStack({ cv }: { cv: CvDocument }) {
   return (
     <CollapsibleSection
       headingId="titre-personal-stack"
@@ -1180,12 +1145,7 @@ export function SectionPersonalStack({
             return <CultureBlock item={entry} key="culture" />
           }
           return (
-            <QuantumPortfolioCard
-              item={entry}
-              key={entry.id}
-              onResetOrder={onResetOrder}
-              onShuffleReality={onShuffleReality}
-            />
+            <QuantumPortfolioCard item={entry} key={entry.id} />
           )
         })}
       </div>

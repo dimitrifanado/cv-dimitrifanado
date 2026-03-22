@@ -2,7 +2,14 @@
  * Application CV : sidebar (profil, navigation, export PDF) + contenu scrollable.
  * Sur mobile, une barre fixe en bas donne l’accès à Contact, Navigation et PDF.
  */
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import cvRaw from '../data/cv.json'
 import {
   SectionApropos,
@@ -50,15 +57,6 @@ function sortExperience(items: Experience[]) {
     (a, b) =>
       new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
   )
-}
-
-function shuffleSections<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
 }
 
 function NavLinks({
@@ -117,45 +115,7 @@ export default function App() {
       setPdfSaving(false)
     }
   }, [pdfSaving])
-  const [sectionOrder, setSectionOrder] = useState<CvSectionKey[]>(() => [
-    ...DEFAULT_SECTION_ORDER,
-  ])
-  const [orderAnnouncement, setOrderAnnouncement] = useState('')
-
-  /**
-   * Ordre réellement affiché : si `sectionOrder` est incomplet (ex. HMR après ajout d’une section),
-   * on retombe sur l’ordre par défaut pour que toutes les sections restent visibles.
-   */
-  const displaySectionOrder = useMemo(() => {
-    const allowed = new Set(DEFAULT_SECTION_ORDER)
-    const filtered = [
-      ...new Set(sectionOrder.filter((k) => allowed.has(k))),
-    ] as CvSectionKey[]
-    const complete =
-      filtered.length === DEFAULT_SECTION_ORDER.length &&
-      DEFAULT_SECTION_ORDER.every((k) => filtered.includes(k))
-    return complete ? filtered : [...DEFAULT_SECTION_ORDER]
-  }, [sectionOrder])
-
   const sortedExperience = useMemo(() => sortExperience(cv.experience), [])
-
-  const shuffleReality = useCallback(() => {
-    setSectionOrder(shuffleSections([...DEFAULT_SECTION_ORDER]))
-    setOrderAnnouncement(
-      'Ordre des sections mélangé. Multivers activé.',
-    )
-  }, [])
-
-  const resetDeterminism = useCallback(() => {
-    setSectionOrder([...DEFAULT_SECTION_ORDER])
-    setOrderAnnouncement('Ordre des sections réinitialisé.')
-  }, [])
-
-  useEffect(() => {
-    if (!orderAnnouncement) return
-    const t = window.setTimeout(() => setOrderAnnouncement(''), 3500)
-    return () => window.clearTimeout(t)
-  }, [orderAnnouncement])
 
   const closeMobileNav = () => setMobileNavOpen(false)
 
@@ -219,13 +179,7 @@ export default function App() {
       case 'formation':
         return <SectionFormation cv={cv} />
       case 'personal':
-        return (
-          <SectionPersonalStack
-            cv={cv}
-            onResetOrder={resetDeterminism}
-            onShuffleReality={shuffleReality}
-          />
-        )
+        return <SectionPersonalStack cv={cv} />
       default:
         return null
     }
@@ -343,16 +297,8 @@ export default function App() {
           </span>
         </header>
 
-        <div
-          aria-live="polite"
-          className="sr-only"
-          role="status"
-        >
-          {orderAnnouncement}
-        </div>
-
         <main className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-9 px-4 pb-24 pt-6 md:gap-10 md:pb-16 md:pt-8">
-          {displaySectionOrder.map((key) => (
+          {DEFAULT_SECTION_ORDER.map((key) => (
             <Fragment key={key}>{renderSection(key)}</Fragment>
           ))}
         </main>

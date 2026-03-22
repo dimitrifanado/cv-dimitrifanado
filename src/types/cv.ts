@@ -174,8 +174,6 @@ export type PersonalStackPortfolioItem = {
   teaserClosed?: string | null
   subtitleOpen: string
   blocks: PersonalStackPortfolioBlock[]
-  /** Phrase avant les boutons « Générer ma Réalité » */
-  practicePrompt: string
 }
 
 export type PersonalStackEntry =

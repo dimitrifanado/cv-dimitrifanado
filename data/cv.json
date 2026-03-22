@@ -332,7 +332,6 @@
         "id": "physique-quantique",
         "category": "Physique quantique",
         "subtitleOpen": "Wanted Cat : dead AND alive",
-        "practicePrompt": "Vous voulez le mettre en pratique ?",
         "blocks": [
           {
             "heading": null,
