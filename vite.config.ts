@@ -15,8 +15,10 @@ export default defineConfig(({ command }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    // Évite deux copies de React en dev (Invalid hook call / useState sur null).
+    dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['html-to-image', 'jspdf'],
+    include: ['react', 'react-dom', 'html-to-image', 'jspdf'],
   },
 }))
